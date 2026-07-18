@@ -26,17 +26,33 @@ app.use(
 
 // CORS configuration
 const allowedOrigins = [
-  process.env.CLIENT_URL || "https://portfolio-six-black-xf00gxhq7u.vercel.app",
+  "https://portfolio-six-black-xf00gxhq7u.vercel.app",
   "http://localhost:3000",
   "http://localhost:3001",
   "http://localhost:3002"
 ];
+
+if (process.env.CLIENT_URL) {
+  allowedOrigins.push(process.env.CLIENT_URL);
+}
+
+// Normalize all allowed origins by removing trailing slashes
+const cleanAllowedOrigins = allowedOrigins.map(url => url.replace(/\/$/, ""));
+
 app.use(
   cors({
     origin: (origin, callback) => {
       // Allow requests with no origin (Postman, curl, server-to-server)
-      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
-      callback(new Error("Not allowed by CORS"));
+      if (!origin) return callback(null, true);
+      
+      const cleanOrigin = origin.replace(/\/$/, "");
+      
+      // Allow if origin matches allowed list OR is any Vercel deployment URL
+      if (cleanAllowedOrigins.includes(cleanOrigin) || cleanOrigin.endsWith(".vercel.app")) {
+        return callback(null, true);
+      }
+      
+      callback(new Error(`Not allowed by CORS: ${origin}`));
     },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
