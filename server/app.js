@@ -68,6 +68,31 @@ app.use(express.urlencoded({ extended: true, limit: "15mb" }));
 // Static Folder for Uploads
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Diagnostic Route
+import mongoose from "mongoose";
+app.get("/api/diag", (req, res) => {
+  const dbState = mongoose.connection.readyState;
+  const states = {
+    0: "disconnected",
+    1: "connected",
+    2: "connecting",
+    3: "disconnecting"
+  };
+  
+  const rawUri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/portfolio";
+  const cleanUri = rawUri.replace(/:([^:@]+)@/, ":xxxxxx@");
+
+  res.json({
+    app: "MERN Portfolio API",
+    dbConnectionState: states[dbState] || "unknown",
+    dbHost: mongoose.connection.host || "none",
+    dbName: mongoose.connection.name || "none",
+    configuredUri: cleanUri,
+    clientUrl: process.env.CLIENT_URL || "not configured",
+    nodeEnv: process.env.NODE_ENV || "development"
+  });
+});
+
 // Mount API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/contact", contactRoutes);
