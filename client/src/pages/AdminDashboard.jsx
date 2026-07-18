@@ -709,9 +709,12 @@ const AdminDashboard = () => {
                         <option>Internship</option>
                         <option>Training</option>
                         <option>Volunteer Work</option>
+                        <option>Volunteering</option>
+                        <option>Open Source</option>
                         <option>Hackathons</option>
                         <option>Freelancing</option>
                         <option>Job</option>
+                        <option>Project</option>
                       </select>
                     </div>
                     <div className="flex flex-col gap-1.5">

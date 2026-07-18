@@ -1,5 +1,5 @@
+import "../config/env.js";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
 import connectDB from "../config/db.js";
 
 // Models
@@ -10,9 +10,6 @@ import Education from "../models/Education.js";
 import Experience from "../models/Experience.js";
 import Achievement from "../models/Achievement.js";
 import Setting from "../models/Setting.js";
-
-// Load Environment Variables
-dotenv.config();
 
 const initialSkills = [
   // Programming

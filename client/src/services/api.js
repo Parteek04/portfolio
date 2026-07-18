@@ -11,10 +11,78 @@ import { settingsData } from "../data/settings";
 import { socialData } from "../data/social";
 
 // Setup Base Axios Instance
-const API_URL = import.meta.env.VITE_API_BASE_URL || "/api";
+const getApiUrl = () => {
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+  
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    if (
+      hostname === "localhost" || 
+      hostname === "127.0.0.1" || 
+      hostname.startsWith("192.168.") || 
+      hostname.startsWith("10.") || 
+      hostname.startsWith("172.")
+    ) {
+      return "/api";
+    }
+  }
+
+  return "https://exquisite-luck-production-832d.up.railway.app/api";
+};
+
+const API_URL = getApiUrl();
 const api = axios.create({
   baseURL: API_URL,
   timeout: 4000 // 4 seconds timeout
+});
+
+// Helper to recursively normalize relative /uploads/ paths to absolute URLs in production
+const normalizeImageUrls = (data) => {
+  if (!data) return data;
+  
+  const backendHost = "https://exquisite-luck-production-832d.up.railway.app";
+  const isLocal = typeof window !== "undefined" && (
+    window.location.hostname === "localhost" || 
+    window.location.hostname === "127.0.0.1" || 
+    window.location.hostname.startsWith("192.168.") || 
+    window.location.hostname.startsWith("10.") || 
+    window.location.hostname.startsWith("172.")
+  );
+
+  if (isLocal) return data;
+
+  if (typeof data === "string") {
+    if (data.startsWith("/uploads/")) {
+      return `${backendHost}${data}`;
+    }
+    return data;
+  }
+
+  if (Array.isArray(data)) {
+    return data.map(item => normalizeImageUrls(item));
+  }
+
+  if (typeof data === "object") {
+    const newData = {};
+    for (const key in data) {
+      if (Object.prototype.hasOwnProperty.call(data, key)) {
+        newData[key] = normalizeImageUrls(data[key]);
+      }
+    }
+    return newData;
+  }
+
+  return data;
+};
+
+// Response Interceptor to automatically normalize all image URLs
+api.interceptors.response.use((response) => {
+  if (response.data) {
+    response.data = normalizeImageUrls(response.data);
+  }
+  return response;
 });
 
 // Add JWT token to header if exists
@@ -40,11 +108,15 @@ let inMemoryDb = {
 
 export const checkBackendStatus = async () => {
   try {
-    const res = await axios.get(`${API_URL}/settings`, { timeout: 1500 });
+    const res = await axios.get(`${API_URL}/settings`, { timeout: 2500 });
     if (res.data && res.data.success) {
       isFallbackMode = false;
       console.log("Connected to portfolio backend server! MongoDB mode active.");
       return false;
+    } else {
+      isFallbackMode = true;
+      console.warn("Invalid response from backend server. Activating Offline Local JSON Mode.");
+      return true;
     }
   } catch (error) {
     isFallbackMode = true;
