@@ -9,7 +9,7 @@ const experienceSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      enum: ["Internship", "Training", "Volunteer Work", "Hackathons", "Freelancing", "Job", "Project"]
+      enum: ["Internship", "Training", "Volunteer Work", "Volunteering", "Open Source", "Hackathons", "Freelancing", "Job", "Project"]
     },
     duration: { type: String, required: true, trim: true },
     description: [{ type: String }],
