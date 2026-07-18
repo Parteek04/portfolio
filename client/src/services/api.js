@@ -12,8 +12,20 @@ import { socialData } from "../data/social";
 
 // Setup Base Axios Instance
 const getApiUrl = () => {
-  if (import.meta.env.VITE_API_BASE_URL) {
-    return import.meta.env.VITE_API_BASE_URL;
+  let envUrl = import.meta.env.VITE_API_BASE_URL;
+  if (envUrl) {
+    envUrl = envUrl.trim();
+    if (envUrl !== "/api" && envUrl !== "api") {
+      // Ensure it has protocol
+      if (!/^https?:\/\//i.test(envUrl)) {
+        envUrl = `https://${envUrl}`;
+      }
+      // Ensure it has /api path
+      if (!envUrl.endsWith("/api") && !envUrl.includes("/api/")) {
+        envUrl = envUrl.replace(/\/$/, "") + "/api";
+      }
+      return envUrl;
+    }
   }
   
   if (typeof window !== "undefined") {
