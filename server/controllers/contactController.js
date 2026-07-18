@@ -50,8 +50,9 @@ export const submitContactForm = async (req, res, next) => {
           `
         };
 
-        await transporter.sendMail(mailOptions);
-        console.log("Email notification sent successfully.");
+        transporter.sendMail(mailOptions)
+          .then(() => console.log("Email notification sent successfully."))
+          .catch((emailError) => console.error("Email sending failed:", emailError.message));
       } else {
         console.log("Nodemailer configuration missing in .env. Logging message content to console instead:");
         console.log(`[Message] From: ${name} (${email}) | Subject: ${subject} | Content: ${message}`);
