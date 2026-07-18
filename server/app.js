@@ -25,11 +25,22 @@ app.use(
 );
 
 // CORS configuration
+const allowedOrigins = [
+  process.env.CLIENT_URL || "https://portfolio-six-black-xf00gxhq7u.vercel.app",
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://localhost:3002"
+];
 app.use(
   cors({
-    origin: "*", // In production this should be updated to point to the vercel domain
+    origin: (origin, callback) => {
+      // Allow requests with no origin (Postman, curl, server-to-server)
+      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+      callback(new Error("Not allowed by CORS"));
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
   })
 );
 
