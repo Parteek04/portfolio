@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #030712;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #1e1b4b;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #312e81;
+  }
+
+  body {
+    @apply selection:bg-indigo-500 selection:text-white;
+  }
+}
+
+@layer utilities {
+  /* Premium Glassmorphic Card */
+  .glass-card {
+    background: rgba(17, 24, 39, 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .glass-card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .glass-card-hover:hover {
+    border-color: rgba(99, 102, 241, 0.4);
+    box-shadow: 0 0 25px rgba(99, 102, 241, 0.15);
+    transform: translateY(-2px);
+  }
+
+  /* Grid Backgrounds */
+  .grid-bg-dots {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1.5px, transparent 1.5px);
+    background-size: 24px 24px;
+  }
+
+  .grid-bg-dots-darker {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.02) 1.5px, transparent 1.5px);
+    background-size: 24px 24px;
+  }
+
+  .grid-bg-grid {
+    background-image: 
+      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Text Gradients */
+  .text-gradient-indigo {
+    @apply bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent;
+  }
+
+  .text-gradient-gold {
+    @apply bg-gradient-to-r from-yellow-300 via-amber-400 to-orange-500 bg-clip-text text-transparent;
+  }
+
+  /* Glow effects */
+  .glow-indigo {
+    filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.4));
+  }
+  
+  .glow-purple {
+    filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.4));
+  }
+}
+
+/* Custom styles for typing cursor */
+.typing-cursor::after {
+  content: "|";
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  from, to { color: transparent }
+  50% { color: #6366f1; }
+}
+
+/* Custom Scrollbar for dark/light */
+.light-mode-scrollbar::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+.light-mode-scrollbar::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+}
+
+.light-mode-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
